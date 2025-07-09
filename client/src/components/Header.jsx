@@ -1,29 +1,91 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { assets } from '../assets/assets'
+import { useAppContext } from '../context/AppContext'
 
 const Header = () => {
+    const { setInput, input } = useAppContext();
+    const inputRef = useRef();
+
+    // Sync the input field with context value
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.value = input;
+        }
+    }, [input]);
+
+    const onSubmitHandler = async (e) => {
+        e.preventDefault();
+        setInput(inputRef.current.value.trim()); // Trim to avoid accidental whitespaces
+    };
+
+    const onClear = () => {
+        setInput('');
+        inputRef.current.value = '';
+    };
+
     return (
         <div className='mx-8 sm:mx-16 xl:mx-24 relative'>
             <div className='text-center mt-20 mb-8'>
 
-                <div className='inline-flex items-center justify-center gap-4 px-6 py-1.5 mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm text-primary'>
+                {/* Notification Badge */}
+                <div className='inline-flex items-center justify-center gap-2 px-6 py-1.5 mb-4 border border-primary/40 bg-primary/10 rounded-full text-sm text-primary'>
                     <p>New: AI feature integrated</p>
-                    <img src={assets.star_icon} alt="" className='w-2.5'/>
+                    <img src={assets.star_icon} alt="Star Icon" className='w-2.5' />
                 </div>
 
-                <h1 className='text-3xl sm:text-6xl font-semibold sm:leading-16 text-gray-700'>Your own <span className='text-primary'>blogging</span> <br />platform.</h1>
+                {/* Heading */}
+                <h1 className='text-3xl sm:text-6xl font-semibold sm:leading-[4.5rem] text-gray-700'>
+                    Your own <span className='text-primary'>blogging</span> <br />platform.
+                </h1>
 
-                <p className='my-6 sm:my-8 max-w-2xl m-auto max-sm:text-xs text-gray-500'>This is your space to think out loud, to share what matters, and to write without filters. Whether it's one word or a thousand, your story starts right here.</p>
+                {/* Description */}
+                <p className='my-6 sm:my-8 max-w-2xl m-auto max-sm:text-xs text-gray-500'>
+                    This is your space to think out loud, to share what matters, and to write without filters.
+                    Whether it's one word or a thousand, your story starts right here.
+                </p>
 
-                <form className='flex justify-between max-w-lg max-sm:scale-75 mx-auto border border-gray-300 bg-white rounded overflow-hidden'>
-                    <input type="text" placeholder='Search for blogs' required className='w-full pl-4 outline-none'/>
-                    <button type='submit' className='bg-primary text-white px-8 py-2 m-1.5 rounded hover:scale-105 transition-all cursor-pointer'>Search</button>
+                {/* Search Form */}
+                <form 
+                    onSubmit={onSubmitHandler}
+                    className='flex justify-between max-w-lg max-sm:scale-90 mx-auto border border-gray-300 bg-white rounded overflow-hidden'
+                >
+                    <input 
+                        ref={inputRef}
+                        type="text"
+                        placeholder='Search for blogs'
+                        aria-label="Search input"
+                        className='w-full pl-4 py-2 outline-none text-gray-700 placeholder:text-sm placeholder:text-gray-400'
+                    />
+                    <button 
+                        type='submit'
+                        className='bg-primary text-white px-6 py-2 m-1.5 rounded hover:scale-105 transition-transform duration-200 cursor-pointer'
+                    >
+                        Search
+                    </button>
                 </form>
 
             </div>
-            <img src={assets.gradientBackground} alt="" className='absolute -top-50 -z-1 opacity-50'/>
+
+            {/* Clear Search Button */}
+            <div className='text-center mt-2'>
+                {input && (
+                    <button 
+                        onClick={onClear}
+                        className='border font-light text-xs py-1 px-3 rounded-sm shadow-custom-sm cursor-pointer text-gray-600 hover:bg-gray-100 transition-all'
+                    >
+                        Clear Search
+                    </button>
+                )}
+            </div>
+
+            {/* Decorative Background */}
+            <img 
+                src={assets.gradientBackground}
+                alt="Gradient Background"
+                className='absolute -top-50 -z-10 opacity-50 w-full'
+            />
         </div>
     )
 }
 
-export default Header
+export default Header;
